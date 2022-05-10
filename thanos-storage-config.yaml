@@ -1,0 +1,4 @@
+type: s3
+config:
+  bucket: hx-thanos-metrics-storage
+  endpoint: s3.ap-southeast-1.amazonaws.com

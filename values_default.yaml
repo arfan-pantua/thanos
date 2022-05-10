@@ -1,0 +1,50 @@
+# Disable the default reloader.
+# Thanos sidecar will be doing this now
+configmapReload:
+  prometheus:
+    enabled: false
+## Deploy a Prometheus instance
+##
+prometheus:
+  enabled: true
+  ## Annotations for Prometheus
+  ##
+  annotations: {}
+  ## Service account for Prometheuses to use.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  ##
+  serviceAccount:
+    create: false
+    name: "prometheus-sa"
+  podAnnotations: {}
+  prometheusSpec:
+    replicas: 3
+    externalLabels:  # a cool way to add default labels to all metrics 
+      cluster: dev-20220411
+    extraArgs:
+      storage.tsdb.min-block-duration: 5m
+      storage.tsdb.max-block-duration: 5m
+    thanos:
+      baseImage: quay.io/thanos/thanos
+      # args:
+      # - sidecar
+      # - --prometheus.url=http://localhost:9090
+      # - --grpc-address=0.0.0.0:10901
+      # - --http-address=0.0.0.0:10902
+      # - --tsdb.path=/data/
+      # - --reloader.config-file=/etc/config/prometheus.yml
+      # - --reloader.config-envsubst-file=/templated/config/prometheus.yml
+      # - --reloader.rule-dir=/etc/config
+      # env:
+      # - name: REPLICA
+      #   valueFrom:
+      #     fieldRef:
+      #       fieldPath: metadata.name
+    # extraVolumes:
+    # - name: templated-config
+    #   emptyDir:
+    #     medium: Memory  
+    #     configPath: /templated/config/prometheus.yml
+    # extraVolumeMounts:
+    # - name: templated-config
+    #   mountPath: /templated/config
